@@ -18,24 +18,44 @@ client.on("ready", () => {
 
 
 client.on("messageCreate", (message) => {
-    if (message.content.toLowerCase() == "!adastats") {
+
+    let coinName = message.content.slice(6);
+    if (message.content == `!stats${coinName}`) {
         axios.defaults.baseURL = 'https://api.binance.com';
-        axios.get("/api/v3/ticker/24hr?symbol=ADAUSDT")
+        axios.get(`/api/v3/ticker/24hr?symbol=${coinName.toUpperCase()}USDT`)
             .then(function (response) {
-                let msg = `${response.data.symbol}
-                Price Change - ${response.data.priceChange}
-                Price Change Percent- ${response.data.priceChangePercent}
-                Avg price - ${response.data.weightedAvgPrice}
-                Prev Close Price - ${response.data.prevClosePrice}
-                Last Price - ${response.data.lastPrice}
-                High Price - ${response.data.highPrice}
-                Low Price - ${response.data.lowPrice}
-                `;
+                let msg = getBotMessage(response);
                 message.reply(msg);
+            }).catch(function (error) {
+                message.reply(`Kažkokia chuinia parašei (${error.response.status} ${error.response.statusText})`);
             });
     }
 })
 
+
+function getBotMessage(response) {
+    return `
+    ${response.data.symbol}
+    Price - ${response.data.lastPrice}
+
+
+    Price Change Percent- ${response.data.priceChangePercent}
+    Avg price - ${response.data.weightedAvgPrice}
+    Previous Close Price - ${response.data.prevClosePrice}
+    Day High Price - ${response.data.highPrice}
+    Day Low Price - ${response.data.lowPrice}
+    `;
+}
+
+
+// function getBotMessage(response) {
+//     return `
+//     ${response.data.symbol}
+//     Price - ${response.data.lastPrice}
+//     Day High Price - ${response.data.highPrice}
+//     Day Low Price - ${response.data.lowPrice}
+//     `;
+// }
 
 // {
 //     symbol: 'ADAUSDT',
