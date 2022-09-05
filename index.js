@@ -34,19 +34,18 @@ client.on("messageCreate", (message) => {
 
 
 function getBotMessage(response) {
+    let dollarUSLocale = Intl.NumberFormat('en-US');
+
     return `
     ${response.data.symbol}
-    Price - ${response.data.lastPrice}
-
-
+    Price - ${dollarUSLocale(response.data.lastPrice)} 
     Price Change Percent- ${response.data.priceChangePercent}
-    Avg price - ${response.data.weightedAvgPrice}
-    Previous Close Price - ${response.data.prevClosePrice}
-    Day High Price - ${response.data.highPrice}
-    Day Low Price - ${response.data.lowPrice}
+    Avg price - ${dollarUSLocale(response.data.weightedAvgPrice)}
+    Previous Close Price - ${dollarUSLocale(response.data.prevClosePrice)}
+    Day High Price - ${dollarUSLocale(response.data.highPrice)}
+    Day Low Price - ${dollarUSLocale(response.data.lowPrice)}
     `;
 }
-
 
 // function getBotMessage(response) {
 //     return `
