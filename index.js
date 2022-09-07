@@ -1,8 +1,7 @@
 const { default: axios } = require("axios");
 const { GatewayIntentBits } = require("discord.js");
 const Discord = require("discord.js");
-
-const TOKEN = "MTAxNTUyMjc2NTU0NzI0NTcyOA.GIFU5z.VQ7pc1ol_VBLm0dE0WA9dlfezIcFSYPp2By2ow";
+require("dotenv").config()
 
 const client = new Discord.Client({
     intents: [
@@ -79,4 +78,4 @@ function getBotMessage(response) {
 //     lastId: 406438642,
 //     count: 223759
 //   }
-client.login(TOKEN);
+client.login(process.env.TOKEN);
