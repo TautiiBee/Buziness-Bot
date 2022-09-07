@@ -1,7 +1,10 @@
 const { default: axios } = require("axios");
-const { GatewayIntentBits } = require("discord.js");
+const { GatewayIntentBits, MembershipScreeningFieldType } = require("discord.js");
 const Discord = require("discord.js");
+const generateImage = require("./generateImage")
 require("dotenv").config()
+
+const testChannelID = "1017127199305895957"
 
 const client = new Discord.Client({
     intents: [
@@ -15,67 +18,36 @@ client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}`)
 })
 
-
 client.on("messageCreate", (message) => {
-
-    let coinName = message.content.slice(6);
-    if (message.content == `!stats${coinName}`) {
-        axios.defaults.baseURL = 'https://api.binance.com';
-        axios.get(`/api/v3/ticker/24hr?symbol=${coinName.toUpperCase()}USDT`)
-            .then(function (response) {
-                let msg = getBotMessage(response);
-                message.reply(msg);
-            }).catch(function (error) {
-                message.reply(`Kažkokia chuinia parašei (${error.response.status} ${error.response.statusText})`);
-            });
+    if (message.channel.id == testChannelID) {
+        let coinName = message.content.slice(6);
+        if (message.content == `!stats${coinName}`) {
+            axios.defaults.baseURL = 'https://api.binance.com';
+            axios.get(`/api/v3/ticker/24hr?symbol=${coinName.toUpperCase()}USDT`)
+                .then(async function (response) {
+                    let msg = getBotMessage(response);
+                    const img = await generateImage(msg);
+                    message.channel.send({ files: [img] });
+                }).catch(function (error) {
+                    message.reply(`Kažkokia chuinia parašei (${error.response.status} ${error.response.statusText})`);
+                });
+        }
     }
 })
 
 
 function getBotMessage(response) {
     let dollarUSLocale = Intl.NumberFormat('en-US');
-
-    return `
-    ${response.data.symbol}
-    Price: ${dollarUSLocale.format(response.data.lastPrice)}$ 
-    Price Change Percent: ${response.data.priceChangePercent}%
-    Avg price: ${dollarUSLocale.format(response.data.weightedAvgPrice)}$
-    Previous Close Price: ${dollarUSLocale.format(response.data.prevClosePrice)}$
-    Day High Price: ${dollarUSLocale.format(response.data.highPrice)}$
-    Day Low Price: ${dollarUSLocale.format(response.data.lowPrice)}$
-    `;
+    return {
+        symbol: `${response.data.symbol}`,
+        price: `$${dollarUSLocale.format(response.data.lastPrice)} `,
+        DayChange: `${response.data.priceChangePercent}%`,
+        AvgPrice:  `Avg Price:   $${dollarUSLocale.format(response.data.weightedAvgPrice)}`,
+        DayHigh:   `24hHigh:     $${dollarUSLocale.format(response.data.highPrice)}`,
+        DayLow:    `24h Low:     $${dollarUSLocale.format(response.data.lowPrice)}`,
+        OpenPrice: `Open Price: $${dollarUSLocale.format(response.data.openPrice)}`,
+        ClosePrice:`Close Price: $${dollarUSLocale.format(response.data.prevClosePrice)}`,
+    };
 }
 
-// function getBotMessage(response) {
-//     return `
-//     ${response.data.symbol}
-//     Price - ${response.data.lastPrice}
-//     Day High Price - ${response.data.highPrice}
-//     Day Low Price - ${response.data.lowPrice}
-//     `;
-// }
-
-// {
-//     symbol: 'ADAUSDT',
-//     priceChange: '0.02260000',
-//     priceChangePercent: '4.707',
-//     weightedAvgPrice: '0.49280593',
-//     prevClosePrice: '0.48000000',
-//     lastPrice: '0.50270000',
-//     lastQty: '270.30000000',
-//     bidPrice: '0.50270000',
-//     bidQty: '28778.50000000',
-//     askPrice: '0.50280000',
-//     askQty: '10091.20000000',
-//     openPrice: '0.48010000',
-//     highPrice: '0.51000000',
-//     lowPrice: '0.47560000',
-//     volume: '214725561.00000000',
-//     quoteVolume: '105818029.43030000',
-//     openTime: 1662225881604,
-//     closeTime: 1662312281604,
-//     firstId: 406214884,
-//     lastId: 406438642,
-//     count: 223759
-//   }
 client.login(process.env.TOKEN);
