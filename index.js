@@ -1,5 +1,5 @@
 const { default: axios } = require("axios");
-const { GatewayIntentBits, MembershipScreeningFieldType } = require("discord.js");
+const { GatewayIntentBits } = require("discord.js");
 const Discord = require("discord.js");
 const generateImage = require("./generateImage")
 require("dotenv").config()
