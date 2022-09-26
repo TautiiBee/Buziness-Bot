@@ -4,8 +4,6 @@ const Discord = require("discord.js");
 const generateImage = require("./generateImage")
 require("dotenv").config()
 
-const testChannelID = "1017127199305895957"
-
 const client = new Discord.Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -19,7 +17,7 @@ client.on("ready", () => {
 })
 
 client.on("messageCreate", (message) => {
-    if (message.channel.id == testChannelID) {
+    if (message.channel.id == process.env.CHANNEL_ID) {
         let coinName = message.content.slice(6);
         if (message.content == `!stats${coinName}`) {
             axios.defaults.baseURL = 'https://api.binance.com';
