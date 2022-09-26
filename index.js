@@ -4,8 +4,6 @@ const Discord = require("discord.js");
 const generateImage = require("./generateImage")
 require("dotenv").config()
 
-var port = process.env.PORT || 8080;
-
 const testChannelID = "1017127199305895957"
 
 const client = new Discord.Client({
